@@ -1,16 +1,28 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import { Component } from 'react';
+// import axios from 'axios';
+import './styles.css';
+import Searchbar from './Searchbar/Searchbar';
+
+class App extends Component {
+  static defaultProps = {};
+
+  static propTypes = {};
+
+  state = {
+    searchPixabay: '',
+  };
+
+  componentDidMount() {}
+  componentDidUpdate() {}
+
+  searchImages = ({ search }) => {
+    console.log('пошук ', search);
+    this.setState({ searchPixabay: search });
+  };
+
+  render() {
+    return <Searchbar onSubmit={this.searchImages} />;
+  }
+}
+
+export { App };
