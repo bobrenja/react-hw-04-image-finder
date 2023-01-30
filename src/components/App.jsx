@@ -5,7 +5,6 @@ import axios from 'axios';
 import './styles.css';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
-import ImageGalleryItem from './ImageGallery/ImageGalleryItem/ImageGalleryItem';
 
 const { REACT_APP_API_KEY } = process.env;
 class App extends Component {
