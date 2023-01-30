@@ -5,8 +5,9 @@ import axios from 'axios';
 import './styles.css';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
+import ImageGalleryItem from './ImageGallery/ImageGalleryItem/ImageGalleryItem';
 
-const {REACT_APP_API_KEY} = process.env
+const { REACT_APP_API_KEY } = process.env;
 class App extends Component {
   static defaultProps = {};
 
@@ -29,7 +30,6 @@ class App extends Component {
   // }
 
   getImg() {
-   
     const PAGE = 12;
     const URL = 'https://pixabay.com/api/';
     const search = this.state.searchPixabay;
@@ -62,7 +62,9 @@ class App extends Component {
 
   componentDidMount() {}
   componentDidUpdate(prevProps, prevState) {
-    console.log('prevState', prevState);
+    // console.log('prevState', prevState);
+    // console.log('this_state', this.state);
+
     if (this.state.searchPixabay !== prevState.searchPixabay) {
       this.getImg();
     }
@@ -72,7 +74,7 @@ class App extends Component {
     return (
       <div>
         <Searchbar onSubmit={this.searchQueryImages} />
-        <ImageGallery images={this.state.images} />
+        <ImageGallery itemImg={this.state.images} />
       </div>
     );
   }
