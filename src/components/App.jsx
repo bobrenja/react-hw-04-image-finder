@@ -31,9 +31,6 @@ class App extends Component {
 
   componentDidMount() {}
   componentDidUpdate(prevProps, prevState) {
-    // console.log('prevState', prevState);
-    // console.log('this_state', this.state);
-
     if (this.state.searchPixabay !== prevState.searchPixabay) {
       this.fetchImg();
     }
@@ -58,6 +55,7 @@ class App extends Component {
       showModals: true,
       imgModal: img,
     });
+    document.body.style.overflow = 'hidden';
   };
 
   closeModal = () => {
@@ -65,6 +63,7 @@ class App extends Component {
       showModals: false,
       imgModal: null,
     });
+    document.body.style.overflow = '';
   };
 
   render() {
