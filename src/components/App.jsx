@@ -1,12 +1,13 @@
 import { Component } from 'react';
-import axios from 'axios';
 // import * as dotenv from 'dotenv'
 
+import { getImg } from './helpers/getApi';
+import Modal from './helpers/components/Modal/Modal';
+import ImgFullModal from './ImgFullModal/ImgFullModal';
 import './styles.css';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 
-const { REACT_APP_API_KEY } = process.env;
 class App extends Component {
   static defaultProps = {};
 
@@ -14,46 +15,15 @@ class App extends Component {
 
   state = {
     searchPixabay: '',
-    images: [],
+    imgages: [],
+    page: 1,
+    showModals: false,
+    imgModal: null,
   };
 
   searchQueryImages = ({ search }) => {
-    console.log('пошук ', search);
     this.setState({ searchPixabay: search });
   };
-  // updateSt(img) {
-
-  //     console.log(img);
-  //     // this.setState({images:img})
-
-  // }
-
-  getImg() {
-    const PAGE = 12;
-    const URL = 'https://pixabay.com/api/';
-    const search = this.state.searchPixabay;
-    console.log('LOG', this.state);
-    axios
-      .get(URL, {
-        params: {
-          key: REACT_APP_API_KEY,
-          page: 1,
-          q: search,
-          image_type: 'photo',
-          per_page: PAGE,
-        },
-      })
-      .then(({ data }) => {
-        this.changeState(data.hits);
-        console.log('end');
-      });
-    // .catch(()= (error)=> {
-    //   console.log(error);
-    // })
-    // .then(function () {
-    //   // выполняется всегда
-    // });
-  }
 
   changeState(img) {
     this.setState({ images: [...img] });
@@ -65,15 +35,51 @@ class App extends Component {
     // console.log('this_state', this.state);
 
     if (this.state.searchPixabay !== prevState.searchPixabay) {
-      this.getImg();
+      this.fetchImg();
     }
   }
+
+  async fetchImg() {
+    try {
+      const { searchPixabay, page } = this.state;
+      const data = await getImg(searchPixabay, page);
+      this.setState(({ imgages }) => ({
+        images: [...imgages, ...data.hits],
+      }));
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
+
+  showImgModal = img => {
+    this.setState({
+      showModals: true,
+      imgModal: img,
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      showModals: false,
+      imgModal: null,
+    });
+  };
 
   render() {
     return (
       <div>
         <Searchbar onSubmit={this.searchQueryImages} />
-        <ImageGallery itemImg={this.state.images} />
+        <ImageGallery
+          itemImg={this.state.images}
+          onClickImg={this.showImgModal}
+        />
+        {this.state.showModals && (
+          <Modal close={this.closeModal}>
+            <ImgFullModal img={this.state.imgModal} />
+          </Modal>
+        )}
       </div>
     );
   }

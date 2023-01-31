@@ -1,19 +1,16 @@
 import style from './ImageGallery.module.scss';
 import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
 
-const ImageGallery = ({ itemImg }) => {
-  console.log(itemImg);
-  //  const {id, webformatURL, largeImageURL, tags} = itemImg
-
+const ImageGallery = ({ onClickImg, itemImg = [] }) => {
   return (
-    <ul class={style.ImageGallery}>
-
+    <ul className={style.ImageGallery}>
       {itemImg.map(({ id, webformatURL, largeImageURL, tags }) => (
         <ImageGalleryItem
-          key={id}
+          key={largeImageURL}
           webformatURL={webformatURL}
           largeImageURL={largeImageURL}
           tags={tags}
+          onClickImg={onClickImg}
         />
       ))}
     </ul>
