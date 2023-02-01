@@ -1,6 +1,5 @@
 import { Component } from 'react';
-// import * as dotenv from 'dotenv'
-
+import { CirclesWithBar } from 'react-loader-spinner';
 import { getImg } from './helpers/getApi';
 import Modal from './helpers/components/Modal/Modal';
 import ImgFullModal from './ImgFullModal/ImgFullModal';
@@ -8,6 +7,7 @@ import './styles.css';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
+import css from "./app.module.scss"
 
 const PAGE_ITEM = 12;
 class App extends Component {
@@ -18,10 +18,11 @@ class App extends Component {
   state = {
     searchPixabay: '',
     images: [],
-    page: 0,
+    page: 1,
     showModals: false,
     imgModal: null,
     btn: false,
+    spiner:false
   };
 
   searchQueryImages = ({ search }) => {
@@ -41,7 +42,7 @@ class App extends Component {
   }
 
   resetState() {
-    this.setState(({ images }) => ({
+    this.setState(({ images,btn,page }) => ({
       images: [],
       btn: false,
       page: 0,
@@ -50,10 +51,11 @@ class App extends Component {
 
   fetchImg = async () => {
     try {
+      this.setState({ spiner: true, btn:false });
       const { searchPixabay, page } = this.state;
       let btnState = false;
 
-      const data = await getImg(searchPixabay, page + 1);
+      const data = await getImg(searchPixabay, page);
       const totalPage = data.totalHits / PAGE_ITEM;
 
       console.log(data);
@@ -68,7 +70,7 @@ class App extends Component {
     } catch (error) {
       this.setState({ error: error.message });
     } finally {
-      this.setState({ loading: false });
+      this.setState({ spiner: false });
     }
   };
 
@@ -102,6 +104,19 @@ class App extends Component {
           </Modal>
         )}
         {this.state.btn && <Button btnClick={this.fetchImg} />}
+        <CirclesWithBar
+  height="100"
+  width="100"
+  color="#4507ef"
+  justic-
+  wrapperStyle={{}}
+  wrapperClass={css.loader}
+  visible={this.state.spiner}
+  outerCircleColor=""
+  innerCircleColor=""
+  barColor="blue"
+  ariaLabel='circles-with-bar-loading'
+/>
       </div>
     );
   }
