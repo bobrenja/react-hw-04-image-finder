@@ -7,7 +7,9 @@ import ImgFullModal from './ImgFullModal/ImgFullModal';
 import './styles.css';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
 
+const PAGE_ITEM = 12;
 class App extends Component {
   static defaultProps = {};
 
@@ -15,10 +17,11 @@ class App extends Component {
 
   state = {
     searchPixabay: '',
-    imgages: [],
-    page: 1,
+    images: [],
+    page: 0,
     showModals: false,
     imgModal: null,
+    btn: false,
   };
 
   searchQueryImages = ({ search }) => {
@@ -32,23 +35,42 @@ class App extends Component {
   componentDidMount() {}
   componentDidUpdate(prevProps, prevState) {
     if (this.state.searchPixabay !== prevState.searchPixabay) {
+      this.resetState()
       this.fetchImg();
     }
   }
 
-  async fetchImg() {
+  resetState() {
+    this.setState(({ images }) => ({
+      images: [],
+      btn: false,
+      page: 0,
+    }));
+  }
+
+  fetchImg = async () => {
     try {
       const { searchPixabay, page } = this.state;
-      const data = await getImg(searchPixabay, page);
-      this.setState(({ imgages }) => ({
-        images: [...imgages, ...data.hits],
+      let btnState = false;
+
+      const data = await getImg(searchPixabay, page + 1);
+      const totalPage = data.totalHits / PAGE_ITEM;
+
+      console.log(data);
+      if (page < totalPage) {
+        btnState = true;
+      }
+      this.setState(({ images }) => ({
+        images: [...images, ...data.hits],
+        btn: btnState,
+        page: page + 1,
       }));
     } catch (error) {
       this.setState({ error: error.message });
     } finally {
       this.setState({ loading: false });
     }
-  }
+  };
 
   showImgModal = img => {
     this.setState({
@@ -79,6 +101,7 @@ class App extends Component {
             <ImgFullModal img={this.state.imgModal} />
           </Modal>
         )}
+        {this.state.btn && <Button btnClick={this.fetchImg} />}
       </div>
     );
   }
