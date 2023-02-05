@@ -1,46 +1,37 @@
-import { Component } from 'react';
-import style from './Searchbar.module.scss'
-class Searchbar extends Component {
-  static defaultProps = {};
+import { useState } from 'react';
+import style from './Searchbar.module.scss';
 
-  static propTypes = {};
+const Searchbar = ({ onSubmitForm }) => {
+  const [search, setSearch] = useState('');
 
-  state = {
-    search: '',
+  const handleInput = ({ target }) => {
+    setSearch(target.value);
   };
 
-  handleInput = ({ target }) => {
-    this.setState({ search: target.value });
-  };
-
-  handleSubmit = (e) =>{
+  const handleSubmit = e => {
     e.preventDefault();
-    const {onSubmit} = this.props;
-    onSubmit({...this.state});
-    this.setState({search:''})
-  }
+    onSubmitForm(search);
+    setSearch('');
+  };
 
-  render() {
-    return (
-      <header className={style.Searchbar}>
-        <form className={style.SearchForm} onSubmit={this.handleSubmit}>
-          <button type="submit" className={style.SearchFormButton}>
-            <span className={style.SearchFormButtonLabel}>Search</span>
-          </button>
+  return (
+    <header className={style.Searchbar}>
+      <form className={style.SearchForm} onSubmit={handleSubmit}>
+        <button type="submit" className={style.SearchFormButton}>
+          <span className={style.SearchFormButtonLabel}>Search</span>
+        </button>
 
-          <input
-            className={style.SearchFormInput}
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            onChange={this.handleInput}
-            value = {this.state.search}
-          />
-        </form>
-      </header>
-    );
-  }
-}
-
+        <input
+          className={style.SearchFormInput}
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          onChange={handleInput}
+          value={search}
+        />
+      </form>
+    </header>
+  );
+};
 export default Searchbar;

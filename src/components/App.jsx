@@ -29,7 +29,7 @@ class App extends Component {
     spiner: false,
   };
 
-  searchQueryImages = ({ search }) => {
+  searchQueryImages = search => {
     this.setState({ searchPixabay: search });
   };
 
@@ -106,7 +106,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Searchbar onSubmit={this.searchQueryImages} />
+        <Searchbar onSubmitForm={this.searchQueryImages} />
         <ImageGallery
           itemImg={this.state.images}
           onClickImg={this.showImgModal}
