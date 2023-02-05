@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { CirclesWithBar } from 'react-loader-spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,126 +14,105 @@ import Button from './Button/Button';
 import css from './app.module.scss';
 
 const PAGE_ITEM = 12;
-class App extends Component {
-  static defaultProps = {};
 
-  static propTypes = {};
+export const App = () => {
+  const [searchPixabay, setSearchPixabay] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [showModals, setShowModals] = useState(false);
+  const [imgModal, setImgModal] = useState(null);
+  const [btn, setBtn] = useState(false);
+  const [spiner, setSpiner] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  state = {
-    searchPixabay: '',
-    images: [],
-    page: 1,
-    showModals: false,
-    imgModal: null,
-    btn: false,
-    spiner: false,
-  };
-
-  searchQueryImages = search => {
-    this.setState({ searchPixabay: search });
-  };
-
-  changeState(img) {
-    this.setState({ images: [...img] });
-  }
-
-  componentDidMount() {}
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.searchPixabay !== prevState.searchPixabay) {
-      this.resetState();
-      this.fetchImg();
+  // console.log(prevState.page)
+  useEffect(() => {
+    if (!searchPixabay) {
+      return;
     }
-  }
 
-  resetState() {
-    this.setState({
-      images: [],
-      btn: false,
-      page: 1,
-    });
-  }
+    const fetchImg = async () => {
+      try {
+        setSpiner(true);
+        setBtn(false);
+        let btnState = false;
 
-  fetchImg = async () => {
-    try {
-      this.setState({ spiner: true, btn: false });
-      const { searchPixabay, page } = this.state;
-      let btnState = false;
+        const data = await getImg(searchPixabay, page);
+        const totalPage = Math.ceil(data.totalHits / PAGE_ITEM);
+        console.log(page);
 
-      const data = await getImg(searchPixabay, page);
-      const totalPage = Math.ceil(data.totalHits / PAGE_ITEM);
-      console.log(page);
+        if (data.totalHits && page === 1) {
+          toast.success(`Search ${data.totalHits} image`);
+        }
+        if (!data.totalHits) {
+          toast.error(`No results "${searchPixabay}" `);
+        }
+        console.log(data);
+        if (page < totalPage) {
+          btnState = true;
+        }
+        console.log(page);
 
-      if (data.totalHits && page === 1) {
-        toast.success(`Search ${data.totalHits} image`);
+        setImages(prevImages => [...prevImages, ...data.hits]);
+        setBtn(btnState);
+      } catch (error) {
+        setErrorMsg(error.message);
+      } finally {
+        setSpiner(false);
       }
-      if (!data.totalHits) {
-        toast.error(`No results "${searchPixabay}" `);
-      }
-      console.log(data);
-      if (page < totalPage) {
-        btnState = true;
-      }
-      console.log(page);
+    };
 
-      this.setState(({ images, page }) => ({
-        images: [...images, ...data.hits],
-        btn: btnState,
-        page: page + 1,
-      }));
-    } catch (error) {
-      this.setState({ error: error.message });
-    } finally {
-      this.setState({ spiner: false });
-    }
+    fetchImg();
+  }, [searchPixabay, page]);
+
+  const searchQueryImages = search => {
+    setSearchPixabay(search);
+    setPage(1);
+    setImages([]);
+    setBtn(false);
+    setErrorMsg('')
   };
 
-  showImgModal = img => {
-    this.setState({
-      showModals: true,
-      imgModal: img,
-    });
+  const showImgModal = img => {
+    setShowModals(true);
+    setImgModal(img);
     document.body.style.overflow = 'hidden';
   };
 
-  closeModal = () => {
-    this.setState({
-      showModals: false,
-      imgModal: null,
-    });
+  const closeModal = () => {
+    setShowModals(false);
+    setImgModal(null);
     document.body.style.overflow = '';
   };
 
-  render() {
-    return (
-      <div>
-        <Searchbar onSubmitForm={this.searchQueryImages} />
-        <ImageGallery
-          itemImg={this.state.images}
-          onClickImg={this.showImgModal}
-        />
-        {this.state.showModals && (
-          <Modal close={this.closeModal}>
-            <ImgFullModal img={this.state.imgModal} />
-          </Modal>
-        )}
-        {this.state.btn && <Button btnClick={this.fetchImg} />}
-        <CirclesWithBar
-          height="100"
-          width="100"
-          color="#4507ef"
-          justic-
-          wrapperStyle={{}}
-          wrapperClass={css.loader}
-          visible={this.state.spiner}
-          outerCircleColor=""
-          innerCircleColor=""
-          barColor="blue"
-          ariaLabel="circles-with-bar-loading"
-        />
-        <ToastContainer />
-      </div>
-    );
-  }
-}
+  const fetchImg = () => {
+    setPage(prevPage => prevPage + 1);
+  };
 
-export { App };
+  return (
+    <div>
+      <Searchbar onSubmitForm={searchQueryImages} />
+      <ImageGallery itemImg={images} onClickImg={showImgModal} />
+      {showModals && (
+        <Modal close={closeModal}>
+          <ImgFullModal img={imgModal} />
+        </Modal>
+      )}
+      {btn && <Button btnClick={fetchImg} />}
+      <CirclesWithBar
+        height="100"
+        width="100"
+        color="#4507ef"
+        justic-
+        wrapperStyle={{}}
+        wrapperClass={css.loader}
+        visible={spiner}
+        outerCircleColor=""
+        innerCircleColor=""
+        barColor="blue"
+        ariaLabel="circles-with-bar-loading"
+      />
+      <ToastContainer />
+    </div>
+  );
+};
