@@ -62,7 +62,7 @@ export const App = () => {
 
   const searchQueryImages = search => {
     if (searchPixabay === search) {
-      toast.warning(`You already searched - "${searchPixabay}" `);
+     return toast.warning(`You already searched - "${searchPixabay}" `);
     }
     setSearchPixabay(search);
     setPage(1);
