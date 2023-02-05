@@ -23,7 +23,7 @@ export const App = () => {
   const [imgModal, setImgModal] = useState(null);
   const [btn, setBtn] = useState(false);
   const [spiner, setSpiner] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  // const [errorMsg, setErrorMsg] = useState('');
 
   // console.log(prevState.page)
   useEffect(() => {
@@ -56,7 +56,8 @@ export const App = () => {
         setImages(prevImages => [...prevImages, ...data.hits]);
         setBtn(btnState);
       } catch (error) {
-        setErrorMsg(error.message);
+        console.log(error.message)
+        // setErrorMsg(error.message);
       } finally {
         setSpiner(false);
       }
