@@ -34,7 +34,6 @@ export const App = () => {
       try {
         setSpiner(true);
         setBtn(false);
-        let btnState = false;
 
         const data = await getImg(searchPixabay, page);
         const totalPage = Math.ceil(data.totalHits / PAGE_ITEM);
@@ -46,13 +45,12 @@ export const App = () => {
           toast.error(`No results "${searchPixabay}" `);
         }
         if (page < totalPage) {
-          btnState = true;
+          setBtn(true);
         }
 
         setImages(prevImages => [...prevImages, ...data.hits]);
-        setBtn(btnState);
       } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
         // setErrorMsg(error.message);
       } finally {
         setSpiner(false);
@@ -63,6 +61,9 @@ export const App = () => {
   }, [searchPixabay, page]);
 
   const searchQueryImages = search => {
+    if (searchPixabay === search) {
+      toast.warning(`You already searched - "${searchPixabay}" `);
+    }
     setSearchPixabay(search);
     setPage(1);
     setImages([]);
