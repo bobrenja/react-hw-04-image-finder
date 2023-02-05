@@ -1,15 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect,useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import style from './Modal.module.scss';
 
 const modalRoot = document.querySelector('#modal-root');
 
 const Modal = ({ close, children }) => {
-  const closeModal = ({ target, currentTarget, code }) => {
+  const closeModal = useCallback(({ target, currentTarget, code }) => {
     if (target === currentTarget || code === 'Escape') {
       close();
     }
-  };
+  });
 
   useEffect(() => {
     document.addEventListener('keydown', closeModal);
