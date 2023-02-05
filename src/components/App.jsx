@@ -70,7 +70,7 @@ export const App = () => {
     setPage(1);
     setImages([]);
     setBtn(false);
-    setErrorMsg('')
+    // setErrorMsg('')
   };
 
   const showImgModal = img => {
