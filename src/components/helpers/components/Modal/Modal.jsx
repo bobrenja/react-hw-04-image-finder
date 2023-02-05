@@ -1,4 +1,4 @@
-import { useEffect,useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import style from './Modal.module.scss';
 
@@ -14,7 +14,6 @@ const Modal = ({ close, children }) => {
 
   useEffect(() => {
     document.addEventListener('keydown', closeModal);
-    console.log('modal');
     return () => document.removeEventListener('keydown', closeModal);
   }, [closeModal]);
 

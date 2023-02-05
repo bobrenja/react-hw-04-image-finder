@@ -25,7 +25,6 @@ export const App = () => {
   const [spiner, setSpiner] = useState(false);
   // const [errorMsg, setErrorMsg] = useState('');
 
-  // console.log(prevState.page)
   useEffect(() => {
     if (!searchPixabay) {
       return;
@@ -39,7 +38,6 @@ export const App = () => {
 
         const data = await getImg(searchPixabay, page);
         const totalPage = Math.ceil(data.totalHits / PAGE_ITEM);
-        console.log(page);
 
         if (data.totalHits && page === 1) {
           toast.success(`Search ${data.totalHits} image`);
@@ -47,11 +45,9 @@ export const App = () => {
         if (!data.totalHits) {
           toast.error(`No results "${searchPixabay}" `);
         }
-        console.log(data);
         if (page < totalPage) {
           btnState = true;
         }
-        console.log(page);
 
         setImages(prevImages => [...prevImages, ...data.hits]);
         setBtn(btnState);
